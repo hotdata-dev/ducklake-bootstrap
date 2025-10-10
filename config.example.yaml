@@ -1,0 +1,27 @@
+# Example configuration for DuckLake bootstrap
+# Copy to config.yaml and edit values as needed.
+
+metadata:
+  # DuckLake stores metadata in a DuckDB file. This is the path to that file.
+  # It will be created if it doesn't exist.
+  duckdb_file: "./metadata.ducklake"
+
+storage:
+  # Use 'minio' (S3-compatible). Later you can add 'aws' or 'localfs' adapters.
+  type: "minio"
+  bucket: "ducklake-data"     # create in MinIO console
+  prefix: "tpch/"             # folder/prefix for parquet
+  endpoint: "http://localhost:9000"
+  region: "us-east-1"
+  # Credentials are read from env by default; you can also put them here (not recommended for prod).
+  # access_key: "minioadmin"
+  # secret_key: "minioadmin"
+  use_ssl: false
+  url_style: "path"           # 'path' recommended for MinIO
+
+catalog:
+  alias: "my_ducklake"        # name to ATTACH as
+
+tpch:
+  # Default scale factor if not given via CLI
+  default_scale: 1

@@ -1,0 +1,5 @@
+config.yaml
+metadata.ducklake
+tpch-sf1.duckdb
+minio-data
+tpch_validation
