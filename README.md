@@ -10,6 +10,21 @@ It also includes a CLI to **generate and load a TPC-H dataset** into DuckLake us
 - This `README.md`.
 
 ## Quick start
+```bash
+# One-time env setup (install dependencies, source environment, etc)
+./setup_env.sh
+
+# Automate calling main script: startup ducklake, minio, load tpch dataset into ducklake
+./run_ducklake.sh
+```
+
+At this point, you'll have a working ducklake! If you want, you can validate the tpch dataset with the standard tpch queries:
+
+```bash
+./run_tpch_queries.py
+```
+
+### More detailed start
 
 1) **Run MinIO (Docker required)**
 
