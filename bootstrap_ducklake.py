@@ -86,18 +86,27 @@ class AppConfig:
         st = d.get("storage", {})
         cg = d.get("catalog", {})
         tp = d.get("tpch", {})
+
+        storage = StorageMinIO(
+            bucket=st.get("bucket", "ducklake-data"),
+            prefix=st.get("prefix", "tpch/"),
+            endpoint=st.get("endpoint", "http://localhost:9000"),
+            region=st.get("region", "us-east-1"),
+            access_key=st.get("access_key", os.getenv("MINIO_ACCESS_KEY")),
+            secret_key=st.get("secret_key", os.getenv("MINIO_SECRET_KEY") or os.getenv("MINIO_SECRET_ACCESS_KEY")),
+            use_ssl=bool(st.get("use_ssl", False)),
+            url_style=st.get("url_style", "path"),
+        )
+
+        # Validate storage credentials
+        if not storage.access_key:
+            raise ValueError("storage.access_key is required but was not provided in config or environment variables")
+        if not storage.secret_key:
+            raise ValueError("storage.secret_key is required but was not provided in config or environment variables")
+
         return AppConfig(
             metadata=MetadataDuckDB(file_path=md.get("duckdb_file", "./metadata.ducklake")),
-            storage=StorageMinIO(
-                bucket=st.get("bucket", "ducklake-data"),
-                prefix=st.get("prefix", "tpch/"),
-                endpoint=st.get("endpoint", "http://localhost:9000"),
-                region=st.get("region", "us-east-1"),
-                access_key=st.get("access_key", os.getenv("MINIO_ACCESS_KEY")),
-                secret_key=st.get("secret_key", os.getenv("MINIO_SECRET_KEY") or os.getenv("MINIO_SECRET_ACCESS_KEY")),
-                use_ssl=bool(st.get("use_ssl", False)),
-                url_style=st.get("url_style", "path"),
-            ),
+            storage=storage,
             catalog=CatalogConfig(alias=cg.get("alias", "my_ducklake")),
             tpch=TPCHConfig(default_scale=int(tp.get("default_scale", 1)))
         )
